@@ -1,4 +1,4 @@
-This is a minimized private server for a limited branch of `Project OverRide`, which was created to play fanmade content for a rhythm game whose name is close to `OR`, `Over Rabid`, etc.
+This is a minimized private server for a limited branch of `Project OverRide`, which was created to play fanmade content for a rhythm game whose name is close to `OR`, `Uber Rapid`, `Over Rabid`, etc.
 
 This repo does not contain any copyright or trademark infringing content.
 
