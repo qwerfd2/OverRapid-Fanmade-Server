@@ -1,0 +1,8 @@
+{
+	"isMaintenance":false,
+	"showMessage":false,
+	"en":"This test server is in maintenance now. As a server owner, you can edit this text to tell the player how long this will last, and what reason is behind it.",
+	"zh":"该测试服目前正在维护中。 作为服务器所有者，您可以编辑此文本来告诉玩家这将持续多久，以及其背后的原因。",
+	"sm_en":"Connected to the test server. To disable this message, edit OverRide/maintenance.json.",
+	"sm_zh":"测试服已连接。 要禁用此消息，请编辑 OverRide/maintenance.json。"
+}
