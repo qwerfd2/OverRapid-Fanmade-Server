@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "Music Name",
+    "artist": "Music Artist",
+    "isJapanese": false,
+    "bpm": 167,
+    "sync_6k": "0/0/0/-1400",
+    "sync_4k": "0/0/0",
+    "diff_6k": "0/0/0/18",
+    "diff_4k": "0/0/0",
+    "charter_6k": "-/-/-/charterA",
+    "charter_4k": "-/-/-",
+    "mp3": "song",
+    "preview": "-1/-1",
+    "bga": "-1400/24/3559"
+  }
+]  
