@@ -2,7 +2,38 @@ import os
 import zipfile
 import json
 import shutil
-import subprocess
+import hashlib
+
+def calculate_md5_and_size(file_path):
+    md5_hash = hashlib.md5()
+    file_size = 0
+
+    with open(file_path, "rb") as file:
+        for byte_block in iter(lambda: file.read(4096), b""):
+            md5_hash.update(byte_block)
+            file_size += len(byte_block)
+
+    return md5_hash.hexdigest(), file_size
+
+def process_folder(folder_path):
+    md5_checksum_dict = {}
+    size_dict = {}
+
+    for root, dirs, files in os.walk(folder_path):
+        for file_name in files:
+            file_path = os.path.join(root, file_name)
+            relative_path = os.path.relpath(file_path, folder_path)
+            
+            md5_checksum, file_size = calculate_md5_and_size(file_path)
+            
+            md5_checksum_dict[relative_path.replace("\\", "/")] = md5_checksum
+            size_dict[relative_path.replace("\\", "/")] = file_size
+
+    return md5_checksum_dict, size_dict
+
+def write_to_file(file_name, data):
+    with open(file_name, "w") as file:
+        file.write(json.dumps(data, separators=(',', ':')))
 
 def get_unique_song_file(existing_songs, song_file):
     counter = 1
@@ -11,13 +42,6 @@ def get_unique_song_file(existing_songs, song_file):
         unique_song_file = f"{song_file}{counter}"
         counter += 1
     return unique_song_file
-
-# Run another python script. Used to refresh metadata and sync after finishing.
-def run_other_script(script_path):
-    result = subprocess.run(["python", script_path], capture_output=True, text=True)
-    print(result.stdout)
-    if result.stderr:
-        print("Error:", result.stderr)
 
 def get_chart_list(dir, manifest):
     chart_6k = manifest[0].get("diff_6k").split('/')
@@ -111,7 +135,7 @@ def deleteChart(song_id):
         json.dump(playmanifest, f, indent=4)
 
     # Correct the main sync and metadata.
-    run_other_script("metadata.py")
+    update_metadata()
     print("Song has been deleted from the server. 歌曲已从服务器删除。")
 
 def importChart(name):
@@ -292,9 +316,22 @@ def importChart(name):
 
     # Refresh the metadata and we are done!
 
-    run_other_script("metadata.py")
+    update_metadata()
     shutil.rmtree(extract_to)
     print(f"Song added: 歌曲已添加：{unique_song_file}")
+
+def update_metadata():
+    resources_folder = "Resources"
+    
+    md5_checksum_dict, size_dict = process_folder(resources_folder)
+    
+    md5_file_name = "OverRide/Md5ListChecksum.json"
+    size_file_name = "OverRide/SizeList.json"
+    
+    write_to_file(md5_file_name, md5_checksum_dict)
+    write_to_file(size_file_name, size_dict)
+
+    print(f"MD5 and size checksums saved.")
 
 def main():
     print("Override Concierge - 您的Override管家")
