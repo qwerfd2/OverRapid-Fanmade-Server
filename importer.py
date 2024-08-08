@@ -44,14 +44,14 @@ def get_unique_song_file(existing_songs, song_file):
     return unique_song_file
 
 def get_chart_list(dir, manifest):
-    chart_6k = manifest[0].get("diff_6k").split('/')
-    chart_4k = manifest[0].get("diff_4k").split('/')
+    chart_6k = manifest.get("diff_6k").split('/')
+    chart_4k = manifest.get("diff_4k").split('/')
     dir_list = []
     all_chart = chart_6k + chart_4k
     diff_table = ["_EL.bms", "_EX.bms", "_LPR.bms", "_PR.bms", "_EL4.bms", "_EX4.bms", "_PR4.bms"]
     for i in range(len(all_chart)):
         if all_chart[i] != "0":
-            path = os.path.join(dir, "note", manifest[0].get("mp3") + diff_table[i])
+            path = os.path.join(dir, "note", manifest.get("mp3") + diff_table[i])
             dir_list.append(path)
     return dir_list
 
@@ -104,7 +104,7 @@ def deleteChart(song_id):
 
     # Remove charts
 
-    charts = get_chart_list(os.path.join("OverRide"), manifest_to_remove)
+    charts = get_chart_list(os.path.join("OverRide"), manifest_to_remove[0])
 
     for chart in charts:
         print(chart)
@@ -179,146 +179,148 @@ def importChart(name):
     except Exception as e:
         print(f"JSON parse failed for manifest failed: {e}")
         return
+    
+    for song in manifest:
+        song_file = song.get("mp3")
 
-    song_file = manifest[0].get("mp3")
+        # get list of charts
 
-    # get list of charts
+        charts = get_chart_list(extract_to, song)
 
-    charts = get_chart_list(extract_to, manifest)
+            # Sanity check everything
 
-        # Sanity check everything
+        standard_check = True
+        reason_fail = ""
 
-    standard_check = True
-    reason_fail = ""
+        bga_data = song.get("bga")
 
-    bga_data = manifest[0].get("bga")
+        # New sanity check: 
+        # (1): either the jpg and png version of the thumbnail should exist. 
 
-    # New sanity check: 
-    # (1): either the jpg and png version of the thumbnail should exist. 
+        img1_path = os.path.join(os.path.join(extract_to, "thumbs"), f"{song_file}.jpg")
+        img2_path = os.path.join(os.path.join(extract_to, "thumbs"), f"{song_file}.png")
 
-    img1_path = os.path.join(os.path.join(extract_to, "thumbs"), f"{song_file}.jpg")
-    img2_path = os.path.join(os.path.join(extract_to, "thumbs"), f"{song_file}.png")
-
-    if os.path.exists(img1_path) == False and os.path.exists(img2_path) == False:
-        standard_check = False
-        reason_fail += "\nSong thumbnail (music_name.jpg or music_name.png) is missing from the thumbs folder. "
-
-    # (2): The correct mp3 file should be there.
-
-    song_path = os.path.join(os.path.join(extract_to, "music"), f"{song_file}.mp3")
-
-    if os.path.exists(song_path) == False:
-        standard_check = False
-        reason_fail += "\nMusic file (music_name.mp3) is missing from the Music folder. "
-
-    # (3): If bga data is present, bga file should be there.
-
-    bga_path = os.path.join(os.path.join(extract_to, "bga"), f"{song_file}.zip")
-
-    if bga_data != None and os.path.exists(bga_path) == False:
-        standard_check = False
-        reason_fail += "\nSince manifest specified BGA, there should be a music_name.zip in the bga folder. "
-
-    # (4): If bga data is not present but there is a song_name.zip in bga folder.
-
-    if bga_data == None and os.path.exists(bga_path):
-        standard_check = False
-        reason_fail += "\nManifest did not specify BGA, but there is a music_name.zip in the bga folder. While this is not a breaking issue, if you wish to use the BGA please specify it in the manifest. "
-
-    # (5): All the charts specified in the manifest should exist
-
-    for chart in charts:
-        if os.path.exists(chart) == False:
+        if os.path.exists(img1_path) == False and os.path.exists(img2_path) == False:
             standard_check = False
-            reason_fail += "\nA chart that is specified in manifest is missing from the note folder: " + chart + ". "
+            reason_fail += "\nSong thumbnail (music_name.jpg or music_name.png) is missing from the thumbs folder. "
 
-    # That is it!
+        # (2): The correct mp3 file should be there.
 
-    if standard_check == False:
-        print("The song contains issues and is not imported. 此曲目存在问题，没有导入。")
-        print("The reasons are as follows. 原因如下。")
-        print(reason_fail)
-        shutil.rmtree(extract_to)
-        return
-    
-    playmanifest_path = "OverRide/playmanifest.json"
-    with open(playmanifest_path, 'r') as f:
-        playmanifest = json.load(f)
-    
-    existing_song_files = [item[0].get("mp3") for item in playmanifest]
-    unique_song_file = get_unique_song_file(existing_song_files, song_file)
+        song_path = os.path.join(os.path.join(extract_to, "music"), f"{song_file}.mp3")
 
-    # Copy bga zip file if bga is specified
+        if os.path.exists(song_path) == False:
+            standard_check = False
+            reason_fail += "\nMusic file (music_name.mp3) is missing from the Music folder. "
 
-    if bga_data != None:
-        new_bga_name = unique_song_file + ".zip"
-        new_bga_path = os.path.join("OverRide", "bga", new_bga_name)
-        os.makedirs(os.path.dirname(new_bga_path), exist_ok=True)
-        shutil.move(bga_path, new_bga_path)
+        # (3): If bga data is present, bga file should be there.
 
-    # Copy music file
+        bga_path = os.path.join(os.path.join(extract_to, "bga"), f"{song_file}.zip")
 
-    new_song_name = unique_song_file + ".mp3"
-    new_song_path = os.path.join("OverRide", "music", new_song_name)
-    os.makedirs(os.path.dirname(new_song_path), exist_ok=True)
-    shutil.move(song_path, new_song_path)
+        if bga_data != None and os.path.exists(bga_path) == False:
+            standard_check = False
+            reason_fail += "\nSince manifest specified BGA, there should be a music_name.zip in the bga folder. "
 
-    # Copy the thumbnails
+        # (4): If bga data is not present but there is a song_name.zip in bga folder.
 
-    if os.path.exists(img1_path):
-        img_path = img1_path
-        append = ".jpg"
-    else:
-        img_path = img2_path
-        append = ".png"
+        if bga_data == None and os.path.exists(bga_path):
+            standard_check = False
+            reason_fail += "\nManifest did not specify BGA, but there is a music_name.zip in the bga folder. While this is not a breaking issue, if you wish to use the BGA please specify it in the manifest. "
 
-    new_img_name = unique_song_file + append
-    new_img_path = os.path.join("Resources", "data", new_img_name)
-    os.makedirs(os.path.dirname(new_img_path), exist_ok=True)
-    shutil.move(img_path, new_img_path) 
+        # (5): All the charts specified in the manifest should exist
 
-    # Copy all the charts
+        for chart in charts:
+            if os.path.exists(chart) == False:
+                standard_check = False
+                reason_fail += "\nA chart that is specified in manifest is missing from the note folder: " + chart + ". "
 
-    for chart in charts:
-        new_chart_name = os.path.basename(chart)
-        new_chart_name = new_chart_name.replace(song_file, unique_song_file)
-        new_chart_path = os.path.join("OverRide", "note", new_chart_name)
-        os.makedirs(os.path.dirname(new_chart_path), exist_ok=True)
-        shutil.copy(chart, new_chart_path)
+        # That is it!
 
-    # Add charts to zip
+        if standard_check == False:
+            print("The song contains issues and is not imported. 此曲目存在问题，没有导入。")
+            print("The reasons are as follows. 原因如下。")
+            print(reason_fail)
+            shutil.rmtree(extract_to)
+            continue
+        
+        playmanifest_path = "OverRide/playmanifest.json"
+        with open(playmanifest_path, 'r') as f:
+            playmanifest = json.load(f)
+        
+        existing_song_files = [item[0].get("mp3") for item in playmanifest]
+        unique_song_file = get_unique_song_file(existing_song_files, song_file)
 
-    note_zip_path = os.path.join("OverRide", "Note.zip")
-    new_charts = []
-    for chart in charts:
-        new_chart_name = chart.replace(song_file, f"offlineNote2_{unique_song_file}")
-        new_chart_name = new_chart_name.replace(".bms", "")
-        os.rename(chart, new_chart_name)
-        new_charts.append(new_chart_name)
+        # Copy bga zip file if bga is specified
 
-    with zipfile.ZipFile(note_zip_path, 'a') as note_zip:
-        for chart in new_charts:
-            note_zip.write(chart, arcname=os.path.basename(chart))
+        if bga_data != None:
+            new_bga_name = unique_song_file + ".zip"
+            new_bga_path = os.path.join("OverRide", "bga", new_bga_name)
+            os.makedirs(os.path.dirname(new_bga_path), exist_ok=True)
+            shutil.move(bga_path, new_bga_path)
 
-    # Merge the manifest
+        # Copy music file
 
-    if playmanifest:
-        last_id = playmanifest[-1][0].get("id", 0)
-    else:
-        last_id = 0
+        new_song_name = unique_song_file + ".mp3"
+        new_song_path = os.path.join("OverRide", "music", new_song_name)
+        os.makedirs(os.path.dirname(new_song_path), exist_ok=True)
+        shutil.move(song_path, new_song_path)
 
-    manifest[0]["id"] = last_id + 1
-    manifest[0]["mp3"] = unique_song_file
+        # Copy the thumbnails
 
-    playmanifest.append(manifest)
-    with open(playmanifest_path, 'w') as f:
-        json.dump(playmanifest, f, indent=4)
+        if os.path.exists(img1_path):
+            img_path = img1_path
+            append = ".jpg"
+        else:
+            img_path = img2_path
+            append = ".png"
+
+        new_img_name = unique_song_file + append
+        new_img_path = os.path.join("Resources", "data", new_img_name)
+        os.makedirs(os.path.dirname(new_img_path), exist_ok=True)
+        shutil.move(img_path, new_img_path) 
+
+        # Copy all the charts
+
+        for chart in charts:
+            new_chart_name = os.path.basename(chart)
+            new_chart_name = new_chart_name.replace(song_file, unique_song_file)
+            new_chart_path = os.path.join("OverRide", "note", new_chart_name)
+            os.makedirs(os.path.dirname(new_chart_path), exist_ok=True)
+            shutil.copy(chart, new_chart_path)
+
+        # Add charts to zip
+
+        note_zip_path = os.path.join("OverRide", "Note.zip")
+        new_charts = []
+        for chart in charts:
+            new_chart_name = chart.replace(song_file, f"offlineNote2_{unique_song_file}")
+            new_chart_name = new_chart_name.replace(".bms", "")
+            os.rename(chart, new_chart_name)
+            new_charts.append(new_chart_name)
+
+        with zipfile.ZipFile(note_zip_path, 'a') as note_zip:
+            for chart in new_charts:
+                note_zip.write(chart, arcname=os.path.basename(chart))
+
+        # Merge the manifest
+
+        if playmanifest:
+            last_id = playmanifest[-1][0].get("id", 0)
+        else:
+            last_id = 0
+
+        song["id"] = last_id + 1
+        song["mp3"] = unique_song_file
+
+        playmanifest.append([song])
+        with open(playmanifest_path, 'w') as f:
+            json.dump(playmanifest, f, indent=4)
+
+        print(f"Song added: 歌曲已添加：{unique_song_file}")
 
     # Refresh the metadata and we are done!
-
     update_metadata()
     shutil.rmtree(extract_to)
-    print(f"Song added: 歌曲已添加：{unique_song_file}")
+        
 
 def update_metadata():
     resources_folder = "Resources"
