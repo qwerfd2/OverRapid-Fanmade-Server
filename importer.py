@@ -60,7 +60,7 @@ def deleteChart(song_id):
     # Find the song manifest to remove.
 
     playmanifest_path = "OverRide/playmanifest.json"
-    with open(playmanifest_path, 'r') as f:
+    with open(playmanifest_path, 'r', encoding='utf-8') as f:
         playmanifest = json.load(f)
 
     manifest_to_remove = None
@@ -131,7 +131,7 @@ def deleteChart(song_id):
     # Remove the manifest, and refresh the metadata.
 
     playmanifest.remove(manifest_to_remove)
-    with open(playmanifest_path, 'w') as f:
+    with open(playmanifest_path, 'w', encoding='utf-8') as f:
         json.dump(playmanifest, f, indent=4)
 
     # Correct the main sync and metadata.
@@ -174,7 +174,7 @@ def importChart(name):
         print(f"Error: The file '{manifest_path}' does not exist.")
         return
     try:
-        with open(manifest_path, 'r') as f:
+        with open(manifest_path, 'r', encoding='utf-8') as f:
             manifest = json.load(f)
     except Exception as e:
         print(f"JSON parse failed for manifest failed: {e}")
@@ -243,7 +243,7 @@ def importChart(name):
             continue
         
         playmanifest_path = "OverRide/playmanifest.json"
-        with open(playmanifest_path, 'r') as f:
+        with open(playmanifest_path, 'r', encoding='utf-8') as f:
             playmanifest = json.load(f)
         
         existing_song_files = [item[0].get("mp3") for item in playmanifest]
@@ -312,7 +312,7 @@ def importChart(name):
         song["mp3"] = unique_song_file
 
         playmanifest.append([song])
-        with open(playmanifest_path, 'w') as f:
+        with open(playmanifest_path, 'w', encoding='utf-8') as f:
             json.dump(playmanifest, f, indent=4)
 
         print(f"Song added: 歌曲已添加：{unique_song_file}")
