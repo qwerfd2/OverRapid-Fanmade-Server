@@ -101,7 +101,7 @@ clear the ```rank``` table of the database.
 
 Two ways to make charts:
 
-1.	Use OSU! Mania to make 8k charts and convert the ```.osu``` file to ```.bms```. The conversion tool is in the group file. Note: Use text editor to remove negative value TimingPoint from the .osu charts, or the tool will report error. After conversion, use a text editor to replace all ```ZZ``` to ```01```. After that, open the ```.bms``` chart with ```pBMsc``` to fix and modify. The chart should not contain non-01 value.
+1.	Use OSU! Mania to make 8k charts and convert the ```.osu``` file to ```.bms```. The conversion tool is in the group file. Note: Use text editor to remove negative value ```TimingPoint``` from the ```.osu``` charts, or the tool will report error. After conversion, use a text editor to replace all ```ZZ``` to ```01```. After that, open the ```.bms``` chart with ```pBMsc``` to fix and modify. The chart should not contain non-01 value.
 
 2.	Use Malody to make 8k charts and convert the file to ```.bms```. Exploring...
 
