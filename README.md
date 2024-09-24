@@ -12,6 +12,8 @@ This repo does not contain any copyright or trademark infringing content. Client
 
 This server is not compatible with the official version. That version might be released in the future, depending on my mood...
 
+This server offers little in terms of security and efficiency, and I do not recommend running it for reasons other than testing on a local network. 
+
 
 ## 简介
 
@@ -23,6 +25,7 @@ This server is not compatible with the official version. That version might be r
 
 此服务器不兼容官方版本。日后看心情吧兼容官方的版本可能会放出来...
 
+此服务器安全性和效率基本为零。除了在本地网络测试功能，我不建议其他的用途。
 
 ## Manual
 
