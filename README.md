@@ -58,7 +58,7 @@ After it is installed, make sure your machine and device are under the same subn
 
 Use the output to find the machine's subnet IPV4. Open ```config.py``` inside the server folder and change the IP address to the one you just got. Change the port as you please.
  
-Open cmd in the server directory and type python 6000.py. Wait a moment. Once the server started, Open ```OverRide``` on your device.
+Open cmd in the server directory and type ```python 6000.py```. Wait a moment. Once the server started, Open ```OverRide``` on your device.
 
 In the Connection UI, enter the server's ```http://ip:port/``` according to the specification.
 
