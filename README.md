@@ -86,6 +86,8 @@ Use if you have registered before and would like to set up a new device with it.
 
 Go to the settings page on your old device. Click the "Account" text under the "Account Settings" header 4 times. Your ```UID``` will be displayed and can be saved via screenshot. Go to the new device, enter the ```UID``` on the username page, and click OK.
 
+You can also find the ```UID``` by opening ```player.db``` using ```DB Browser```.
+
 #### Disable registration
 
 Set ```REGISTRATION``` in ```config.py``` to ```False```. Account can only be restored via UID after this is turned off.
@@ -246,6 +248,8 @@ PC 打开 ```cmd``` 输入 ```ipconfig```。MAC 打开 ```terminal``` 输入 ```
 你之前注册过账号，并想用这个账号在新设备上玩。
 
 进入老设备的设置页面。点击 账号设置 下的标题文字 账号 4 次。```UID``` 将显示，可以截屏保存。在新的设备上的登陆界面输入 ```UID```，点击确认。
+
+你也可以用```DB Browser```打开```player.db```来寻找```UID```。
 
 #### 关闭注册
 
