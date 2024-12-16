@@ -265,6 +265,7 @@ def importChart(name):
         shutil.move(song_path, new_song_path)
 
         # Copy the thumbnails
+        # TODO: Bug here - should only copy the file as directed in the manifest. Currently it favors jpg, and could error if a png is instead specified in the manifest.
 
         if os.path.exists(img1_path):
             img_path = img1_path
