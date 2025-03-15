@@ -108,7 +108,7 @@ Two ways to make charts:
 
 1.	Use OSU! Mania to make 8k charts and convert the ```.osu``` file to ```.bms```. The conversion tool is in the group file. Note: Use text editor to remove negative value ```TimingPoint``` from the ```.osu``` charts, or the tool will report error. After conversion, use a text editor to replace all ```ZZ``` to ```01```. After that, open the ```.bms``` chart with ```pBMsc``` to fix and modify. The chart should not contain non-01 value.
 
-2.	Use Malody to make 8k charts and convert the file to ```.bms```. Exploring...
+2.	Use Malody to make 8k charts and convert the file to ```.osu```, then convert to `bms`. [code](https://github.com/Jakads/malody2osu)
 
 // I will leave the actual charting to the professionals
 
@@ -271,7 +271,7 @@ PC 打开 ```cmd``` 输入 ```ipconfig```。MAC 打开 ```terminal``` 输入 ```
  
 1.	通过 OSU! Mania 制 8k 谱并将 ```.osu``` 文件转至 ```.bms```。转码工具在群文件里。注意事项：提前用文本编辑器删除负值 ```TimingPoint```，否则工具会报错。转码后用文本编辑器将所有 ```ZZ``` 变成 01. 之后用 ```pBMsc``` 打开 ```bms``` 进行修改修复并保存。谱面内不应出现非 01 的值。
 
-2.	通过 Malody 制 8k 谱并将谱面转至 ```.bms```。正在探索中。
+2.	通过 Malody 制 8k 谱并将谱面转至 ```.osu```, 再使用上述方法转至 `bms`. [代码](https://github.com/Jakads/malody2osu)
 
 //具体制谱思路让专业的来写（
 
